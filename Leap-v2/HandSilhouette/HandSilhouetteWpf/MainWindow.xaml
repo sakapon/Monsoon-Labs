@@ -5,8 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HandSilhouetteWpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Hand Silhouette" Height="350" Width="525" WindowState="Maximized">
+    <Window.Resources>
+        <Style x:Key="SilhouettePolygonStyle" TargetType="{x:Type Polygon}">
+            <Setter Property="Fill" Value="#FF99CC66"/>
+            <Setter Property="Stroke" Value="#FF99CC66"/>
+            <Setter Property="StrokeThickness" Value="50"/>
+            <Setter Property="StrokeLineJoin" Value="Round"/>
+            <Setter Property="StrokeStartLineCap" Value="Round"/>
+            <Setter Property="StrokeEndLineCap" Value="Round"/>
+            <Setter Property="Opacity" Value="0.5"/>
+        </Style>
+    </Window.Resources>
+    <Window.DataContext>
+        <local:AppModel/>
+    </Window.DataContext>
     <Grid>
-        
+        <Canvas>
+            <Polygon Points="{Binding HandPoints.Value}" Style="{DynamicResource SilhouettePolygonStyle}"/>
+        </Canvas>
     </Grid>
 </Window>
