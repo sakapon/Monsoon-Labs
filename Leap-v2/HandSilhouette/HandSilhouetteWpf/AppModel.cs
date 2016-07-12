@@ -18,13 +18,14 @@ namespace HandSilhouetteWpf
 
         public Controller Controller { get; } = new Controller();
 
+        public ReadOnlyReactiveProperty<Hand> Hand { get; }
         public ReadOnlyReactiveProperty<PointCollection> HandPoints { get; }
 
         public AppModel()
         {
             Controller.SetPolicy(Controller.PolicyFlag.POLICY_BACKGROUND_FRAMES);
 
-            HandPoints = Observable.Interval(TimeSpan.FromSeconds(1 / 30.0))
+            Hand = Observable.Interval(TimeSpan.FromSeconds(1 / 60.0))
                 .Select(_ =>
                 {
                     using (var f = Controller.Frame())
@@ -32,7 +33,11 @@ namespace HandSilhouetteWpf
                         return f.Hands.Frontmost;
                     }
                 })
-                .Select(h => (h != null && h.IsValid) ? GetHandPoints(h).Select(ToScreenPoint).ToArray() : new Point[0])
+                .Select(h => (h != null && h.IsValid) ? h : null)
+                .ToReadOnlyReactiveProperty();
+
+            HandPoints = Hand
+                .Select(h => h != null ? GetHandPoints(h).Select(ToScreenPoint).ToArray() : new Point[0])
                 .ObserveOn(SynchronizationContext.Current)
                 .Select(ps => new PointCollection(ps))
                 .ToReadOnlyReactiveProperty();
