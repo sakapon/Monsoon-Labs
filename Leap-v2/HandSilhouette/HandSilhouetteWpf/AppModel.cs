@@ -16,34 +16,38 @@ namespace HandSilhouetteWpf
         const double ScreenHeight = 1080.0;
         const double MappingScale = 3.0;
 
+        static readonly Hand[] EmptyHands = new Hand[0];
+
         public Controller Controller { get; } = new Controller();
 
-        public ReadOnlyReactiveProperty<Hand> Hand { get; }
-        public ReadOnlyReactiveProperty<PointCollection> HandPoints { get; }
+        public ReadOnlyReactiveProperty<Hand[]> Hands { get; }
+        public ReadOnlyReactiveProperty<PointCollection[]> HandsPoints { get; }
 
         public AppModel()
         {
             Controller.SetPolicy(Controller.PolicyFlag.POLICY_BACKGROUND_FRAMES);
 
-            Hand = Observable.Interval(TimeSpan.FromSeconds(1 / 60.0))
+            Hands = Observable.Interval(TimeSpan.FromSeconds(1 / 60.0))
                 .Select(_ =>
                 {
                     using (var f = Controller.Frame())
                     {
-                        return f.Hands.Frontmost;
+                        return !f.Hands.IsEmpty ? f.Hands.ToArray() : EmptyHands;
                     }
                 })
-                .Select(h => (h != null && h.IsValid) ? h : null)
-                .ToReadOnlyReactiveProperty();
+                .ToReadOnlyReactiveProperty(EmptyHands);
 
-            HandPoints = Hand
-                .Select(h => h != null ? GetHandPoints(h).Select(ToScreenPoint).ToArray() : new Point[0])
+            HandsPoints = Hands
+                .Select(hs => hs.Select(GetHandPoints).ToArray())
                 .ObserveOn(SynchronizationContext.Current)
-                .Select(ps => new PointCollection(ps))
+                .Select(pss => pss.Select(ps => new PointCollection(ps)).ToArray())
                 .ToReadOnlyReactiveProperty();
         }
 
-        static Leap.Vector[] GetHandPoints(Hand h)
+        static Point[] GetHandPoints(Hand h) =>
+            GetHandPoints0(h).Select(ToScreenPoint).ToArray();
+
+        static Leap.Vector[] GetHandPoints0(Hand h)
         {
             var thumb = h.Fingers.GetFinger(Finger.FingerType.TYPE_THUMB);
             var index = h.Fingers.GetFinger(Finger.FingerType.TYPE_INDEX);

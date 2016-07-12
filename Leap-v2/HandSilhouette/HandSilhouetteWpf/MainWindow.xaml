@@ -16,13 +16,17 @@
             <Setter Property="StrokeEndLineCap" Value="Round"/>
             <Setter Property="Opacity" Value="0.5"/>
         </Style>
+        <ItemsPanelTemplate x:Key="HandsPanelTemplate">
+            <Canvas IsItemsHost="True"/>
+        </ItemsPanelTemplate>
+        <DataTemplate x:Key="HandDataTemplate">
+            <Polygon Points="{Binding}" Style="{DynamicResource SilhouettePolygonStyle}"/>
+        </DataTemplate>
     </Window.Resources>
     <Window.DataContext>
         <local:AppModel/>
     </Window.DataContext>
     <Grid>
-        <Canvas>
-            <Polygon Points="{Binding HandPoints.Value}" Style="{DynamicResource SilhouettePolygonStyle}"/>
-        </Canvas>
+        <ItemsControl ItemsSource="{Binding HandsPoints.Value}" ItemsPanel="{DynamicResource HandsPanelTemplate}" ItemTemplate="{DynamicResource HandDataTemplate}"/>
     </Grid>
 </Window>
