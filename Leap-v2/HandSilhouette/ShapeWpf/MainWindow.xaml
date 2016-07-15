@@ -5,8 +5,34 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShapeWpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+        Title="MainWindow" Height="400" Width="900">
+    <Window.Resources>
+        <Style TargetType="{x:Type Polyline}">
+            <Setter Property="Fill" Value="#FFCCFF99"/>
+            <Setter Property="Stroke" Value="#FF99CC66"/>
+            <Setter Property="StrokeThickness" Value="30"/>
+            <Setter Property="StrokeLineJoin" Value="Round"/>
+            <Setter Property="StrokeStartLineCap" Value="Round"/>
+            <Setter Property="StrokeEndLineCap" Value="Round"/>
+            <Setter Property="Opacity" Value="0.5"/>
+        </Style>
+        <Style TargetType="{x:Type Polygon}">
+            <Setter Property="Fill" Value="#FFCCFF99"/>
+            <Setter Property="Stroke" Value="#FF99CC66"/>
+            <Setter Property="StrokeThickness" Value="30"/>
+            <Setter Property="StrokeLineJoin" Value="Round"/>
+            <Setter Property="StrokeStartLineCap" Value="Round"/>
+            <Setter Property="StrokeEndLineCap" Value="Round"/>
+            <Setter Property="Opacity" Value="0.5"/>
+        </Style>
+    </Window.Resources>
+    <Window.DataContext>
+        <local:AppModel/>
+    </Window.DataContext>
+    <Canvas>
+        <Polyline Canvas.Left="100" Canvas.Top="100" Points="100,200 100,100 0,0 100,100 0,100 100,0 0,100 0,200 100,200"/>
+        <Polygon Canvas.Left="300" Canvas.Top="100" Points="100,200 100,100 0,0 100,100 0,100 100,0 0,100 0,200"/>
+        <Polygon Canvas.Left="500" Canvas.Top="100" Points="{Binding PolygonPoints}"/>
+        <Polygon Canvas.Left="700" Canvas.Top="100" Points="{Binding RandomPoints.Value}"/>
+    </Canvas>
 </Window>
