@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 using Leap;
 using Reactive.Bindings;
 
@@ -12,11 +13,13 @@ namespace HandSilhouetteWpf
 {
     public class AppModel
     {
-        const double ScreenWidth = 1920.0;
-        const double ScreenHeight = 1080.0;
-        const double MappingScale = 3.0;
-
         static readonly Hand[] EmptyHands = new Hand[0];
+        static readonly InclinableMapper InclinableMapper = new InclinableMapper
+        {
+            VirtualScreenCenter = new Vector3D(700, 400, 0),
+            AngleDegrees = 40,
+            PixelsPerMillimeter = 3,
+        };
 
         public Controller Controller { get; } = new Controller();
 
@@ -45,7 +48,11 @@ namespace HandSilhouetteWpf
         }
 
         static Point[] GetHandPoints(Hand h) =>
-            GetHandPoints0(h).Select(ToScreenPoint).ToArray();
+            GetHandPoints0(h)
+                .Select(LeapHelper.ToPoint3D)
+                .Select(InclinableMapper.ToScreenPosition)
+                .Select(VectorHelper.ToPoint)
+                .ToArray();
 
         static Leap.Vector[] GetHandPoints0(Hand h)
         {
@@ -65,9 +72,6 @@ namespace HandSilhouetteWpf
                 pinky.GetJoint(1), pinky.GetJoint(2), pinky.GetJoint(3), pinky.GetJoint(4), pinky.GetJoint(3), pinky.GetJoint(2), pinky.GetJoint(1), pinky.GetJoint(0),
             };
         }
-
-        static Point ToScreenPoint(Leap.Vector v) =>
-            new Point(ScreenWidth / 2 + MappingScale * v.x, ScreenHeight - MappingScale * v.y);
     }
 
     public static class HandHelper
