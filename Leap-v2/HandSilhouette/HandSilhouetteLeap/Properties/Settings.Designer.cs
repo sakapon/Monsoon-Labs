@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace HandSilhouetteWpf.Properties
+namespace HandSilhouetteLeap.Properties
 {
 
 

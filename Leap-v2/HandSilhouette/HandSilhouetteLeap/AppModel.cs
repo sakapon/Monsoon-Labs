@@ -9,7 +9,7 @@ using System.Windows.Media.Media3D;
 using Leap;
 using Reactive.Bindings;
 
-namespace HandSilhouetteWpf
+namespace HandSilhouetteLeap
 {
     public class AppModel
     {
