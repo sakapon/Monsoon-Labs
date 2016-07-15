@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Media.Media3D;
 using LVector = Leap.Vector;
 
-namespace HandSilhouetteWpf
+namespace HandSilhouetteLeap
 {
     public static class LeapHelper
     {
