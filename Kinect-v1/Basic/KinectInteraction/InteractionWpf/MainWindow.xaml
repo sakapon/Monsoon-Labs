@@ -5,8 +5,28 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:InteractionWpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Interaction Viewer" Height="400" Width="600" FontSize="36" WindowState="Maximized">
+    <Window.DataContext>
+        <local:MainViewModel/>
+    </Window.DataContext>
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Border BorderBrush="{Binding LeftInteractiveColor.Value}" BorderThickness="8">
+            <StackPanel Margin="16">
+                <TextBlock Text="{Binding IsLeftGripped.Value, StringFormat=Gripped: \{0\}}"/>
+                <TextBlock Text="{Binding IsLeftPressed.Value, StringFormat=Pressed: \{0\}}"/>
+                <TextBlock Text="{Binding LeftHandInfo.Value}" Margin="0,16"/>
+            </StackPanel>
+        </Border>
+        <Border BorderBrush="{Binding RightInteractiveColor.Value}" BorderThickness="8" Grid.Column="1">
+            <StackPanel Margin="16">
+                <TextBlock Text="{Binding IsRightGripped.Value, StringFormat=Gripped: \{0\}}"/>
+                <TextBlock Text="{Binding IsRightPressed.Value, StringFormat=Pressed: \{0\}}"/>
+                <TextBlock Text="{Binding RightHandInfo.Value}" Margin="0,16"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>
