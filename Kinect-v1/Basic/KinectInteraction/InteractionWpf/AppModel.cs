@@ -26,6 +26,7 @@ namespace InteractionWpf
                 .Select(u => u?.HandPointers.FirstOrDefault(h => h.HandType == InteractionHandType.Right))
                 .ToReadOnlyReactiveProperty();
 
+            if (DispatcherHelper.IsInDesignMode) return;
             if (!KinectSensor.KinectSensors.Any()) return;
 
             Sensor = KinectSensor.KinectSensors[0];
