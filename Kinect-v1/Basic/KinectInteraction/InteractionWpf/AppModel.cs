@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using Microsoft.Kinect;
 using Microsoft.Kinect.Toolkit.Interaction;
 using Reactive.Bindings;
@@ -10,7 +11,9 @@ namespace InteractionWpf
 {
     public class AppModel
     {
-        public ReactiveProperty<UserInfo> UserInfo { get; } = new ReactiveProperty<UserInfo>();
+        Subject<UserInfo[]> UserInfoes = new Subject<UserInfo[]>();
+        public IObservable<UserInfo> UserInfo { get; }
+
         public ReadOnlyReactiveProperty<InteractionHandPointer> LeftHand { get; }
         public ReadOnlyReactiveProperty<InteractionHandPointer> RightHand { get; }
 
@@ -19,6 +22,8 @@ namespace InteractionWpf
 
         public AppModel()
         {
+            UserInfo = UserInfoes.Select(us => us.FirstOrDefault(u => u.SkeletonTrackingId != 0));
+
             LeftHand = UserInfo
                 .Select(u => u?.HandPointers.FirstOrDefault(h => h.HandType == InteractionHandType.Left))
                 .ToReadOnlyReactiveProperty();
@@ -70,13 +75,8 @@ namespace InteractionWpf
 
                 var userInfoes = new UserInfo[InteractionFrame.UserInfoArrayLength];
                 frame.CopyInteractionDataTo(userInfoes);
-                UserInfoesReady(userInfoes);
+                UserInfoes.OnNext(userInfoes);
             }
-        }
-
-        void UserInfoesReady(UserInfo[] userInfoes)
-        {
-            UserInfo.Value = userInfoes.FirstOrDefault(u => u.SkeletonTrackingId != 0);
         }
     }
 
