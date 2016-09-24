@@ -47,7 +47,7 @@ namespace InteractionWpf
                 .Select(p => $"{p.Key}: {p.Value}"));
         }
 
-        static string ToInteractiveColor(bool isInteractive) => isInteractive ? "#009900" : "#FF6666";
+        static string ToInteractiveColor(bool isInteractive) => isInteractive ? "#009900" : "#FF6600";
 
         static ReadOnlyReactiveProperty<bool> ToGripped(IObservable<InteractionHandPointer> hps) =>
             hps
