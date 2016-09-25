@@ -10,7 +10,7 @@ namespace ImagePinchKinect
 {
     public class InteractionTracker
     {
-        public ReactiveProperty<UserInfo[]> UserInfoes { get; } = new ReactiveProperty<UserInfo[]>();
+        public ReactiveProperty<UserInfo[]> UserInfoes { get; } = new ReactiveProperty<UserInfo[]>(mode: ReactivePropertyMode.DistinctUntilChanged);
         public ReadOnlyReactiveProperty<UserInfo> UserInfo { get; }
 
         KinectSensor Sensor;
