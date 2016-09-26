@@ -23,5 +23,6 @@
                 <ImageBrush ImageSource="/ImagePinchKinect;component/Images/Seattle.jpg" TileMode="Tile" Viewport="0,0,1920,1200" ViewportUnits="Absolute"/>
             </Rectangle.Fill>
         </Rectangle>
+        <Rectangle Fill="#66FF6600" Height="3600" Width="5760" StrokeThickness="0" Canvas.Left="-1920" Canvas.Top="-1200" Visibility="{Binding IsNotInteractiveVisibility.Value}"/>
     </Canvas>
 </Window>
