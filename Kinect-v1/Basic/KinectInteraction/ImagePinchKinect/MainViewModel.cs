@@ -29,9 +29,8 @@ namespace ImagePinchKinect
                 .Select(v => new Point((2880 - v.X) / 5760, (1800 - v.Y) / 3600))
                 .ToReadOnlyReactiveProperty();
 
-            IsNotInteractiveVisibility = AppModel.InteractiveHand
-                .Select(h => h == null)
-                .Select(b => b ? Visibility.Visible : Visibility.Collapsed)
+            IsNotInteractiveVisibility = AppModel.IsInteractive
+                .Select(b => b ? Visibility.Collapsed : Visibility.Visible)
                 .ToReadOnlyReactiveProperty();
         }
     }
