@@ -12,6 +12,9 @@ namespace InteractionWpf
     {
         public AppModel AppModel { get; } = new AppModel();
 
+        public ReadOnlyReactiveProperty<InteractionHandPointer> LeftHand { get; }
+        public ReadOnlyReactiveProperty<InteractionHandPointer> RightHand { get; }
+
         public ReadOnlyReactiveProperty<string> LeftHandInfo { get; }
         public ReadOnlyReactiveProperty<string> RightHandInfo { get; }
 
@@ -26,17 +29,24 @@ namespace InteractionWpf
 
         public MainViewModel()
         {
-            LeftHandInfo = AppModel.LeftHand.Select(ToString).ToReadOnlyReactiveProperty();
-            RightHandInfo = AppModel.RightHand.Select(ToString).ToReadOnlyReactiveProperty();
+            LeftHand = AppModel.UserInfo
+                .Select(u => u?.HandPointers.FirstOrDefault(h => h.HandType == InteractionHandType.Left))
+                .ToReadOnlyReactiveProperty();
+            RightHand = AppModel.UserInfo
+                .Select(u => u?.HandPointers.FirstOrDefault(h => h.HandType == InteractionHandType.Right))
+                .ToReadOnlyReactiveProperty();
 
-            LeftInteractiveColor = AppModel.LeftHand.Select(hp => ToInteractiveColor(hp != null && hp.IsInteractive)).ToReadOnlyReactiveProperty();
-            RightInteractiveColor = AppModel.RightHand.Select(hp => ToInteractiveColor(hp != null && hp.IsInteractive)).ToReadOnlyReactiveProperty();
+            LeftHandInfo = LeftHand.Select(ToString).ToReadOnlyReactiveProperty();
+            RightHandInfo = RightHand.Select(ToString).ToReadOnlyReactiveProperty();
 
-            IsLeftGripped = ToGripped(AppModel.LeftHand);
-            IsRightGripped = ToGripped(AppModel.RightHand);
+            LeftInteractiveColor = LeftHand.Select(hp => ToInteractiveColor(hp != null && hp.IsInteractive)).ToReadOnlyReactiveProperty();
+            RightInteractiveColor = RightHand.Select(hp => ToInteractiveColor(hp != null && hp.IsInteractive)).ToReadOnlyReactiveProperty();
 
-            IsLeftPressed = AppModel.LeftHand.Select(ToPressed).ToReadOnlyReactiveProperty();
-            IsRightPressed = AppModel.RightHand.Select(ToPressed).ToReadOnlyReactiveProperty();
+            IsLeftGripped = ToGripped(LeftHand);
+            IsRightGripped = ToGripped(RightHand);
+
+            IsLeftPressed = LeftHand.Select(ToPressed).ToReadOnlyReactiveProperty();
+            IsRightPressed = RightHand.Select(ToPressed).ToReadOnlyReactiveProperty();
         }
 
         static string ToString(InteractionHandPointer hp)

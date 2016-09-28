@@ -14,22 +14,12 @@ namespace InteractionWpf
         Subject<UserInfo[]> UserInfoes = new Subject<UserInfo[]>();
         public IObservable<UserInfo> UserInfo { get; }
 
-        public ReadOnlyReactiveProperty<InteractionHandPointer> LeftHand { get; }
-        public ReadOnlyReactiveProperty<InteractionHandPointer> RightHand { get; }
-
         KinectSensor Sensor;
         InteractionStream InteractionStream;
 
         public AppModel()
         {
             UserInfo = UserInfoes.Select(us => us.FirstOrDefault(u => u.SkeletonTrackingId != 0));
-
-            LeftHand = UserInfo
-                .Select(u => u?.HandPointers.FirstOrDefault(h => h.HandType == InteractionHandType.Left))
-                .ToReadOnlyReactiveProperty();
-            RightHand = UserInfo
-                .Select(u => u?.HandPointers.FirstOrDefault(h => h.HandType == InteractionHandType.Right))
-                .ToReadOnlyReactiveProperty();
 
             if (DispatcherHelper.IsInDesignMode) return;
             if (!KinectSensor.KinectSensors.Any()) return;
