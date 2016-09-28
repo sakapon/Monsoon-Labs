@@ -15,7 +15,7 @@ namespace ImagePinchKinect
         public ReadOnlyReactiveProperty<double> Scale { get; }
         public ReadOnlyReactiveProperty<Point> TransformOrigin { get; }
 
-        public ReadOnlyReactiveProperty<Visibility> IsNotInteractiveVisibility { get; }
+        public ReadOnlyReactiveProperty<string> InteractiveColor { get; }
 
         public MainViewModel()
         {
@@ -29,8 +29,8 @@ namespace ImagePinchKinect
                 .Select(v => new Point((2880 - v.X) / 5760, (1800 - v.Y) / 3600))
                 .ToReadOnlyReactiveProperty();
 
-            IsNotInteractiveVisibility = AppModel.IsInteractive
-                .Select(b => b ? Visibility.Collapsed : Visibility.Visible)
+            InteractiveColor = AppModel.IsInteractive
+                .Select(b => b ? "#009900" : "#FF6600")
                 .ToReadOnlyReactiveProperty();
         }
     }
