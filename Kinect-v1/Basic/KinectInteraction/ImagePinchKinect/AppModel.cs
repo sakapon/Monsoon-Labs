@@ -13,7 +13,8 @@ namespace ImagePinchKinect
         public InteractionTracker InteractionTracker { get; } = new InteractionTracker();
 
         public ReadOnlyReactiveProperty<InteractionHandPointer> PrimaryHand { get; }
-        public ReadOnlyReactiveProperty<InteractionHandPointer> InteractiveHand { get; }
+        public ReadOnlyReactiveProperty<bool> IsTracked { get; }
+        public ReadOnlyReactiveProperty<bool> IsInteractive { get; }
         public ReadOnlyReactiveProperty<bool> IsGripped { get; }
 
         public IObservable<IObservable<Vector3D>> GripDrag { get; }
@@ -24,20 +25,25 @@ namespace ImagePinchKinect
             PrimaryHand = InteractionTracker.UserInfo
                 .Select(ToPrimaryHand)
                 .ToReadOnlyReactiveProperty();
-            InteractiveHand = PrimaryHand
-                .Select(h => h?.IsInteractive == true ? h : null)
+            IsTracked = PrimaryHand
+                .Select(h => h?.IsTracked == true)
                 .ToReadOnlyReactiveProperty();
-            IsGripped = InteractiveHand
-                .Where(h => h == null || !h.IsInteractive || h.HandEventType != InteractionHandEventType.None)
-                .Select(h => h != null && h.IsInteractive && h.HandEventType == InteractionHandEventType.Grip)
+            IsInteractive = PrimaryHand
+                .Select(h => h?.IsInteractive == true)
+                .ToReadOnlyReactiveProperty();
+            IsGripped = PrimaryHand
+                .Where(h => h == null || h.HandEventType != InteractionHandEventType.None)
+                .Select(h => h != null && h.HandEventType == InteractionHandEventType.Grip)
                 .ToReadOnlyReactiveProperty();
 
+            // ドラッグは IsInteractive のときに開始します。
+            // ドラッグは IsTracked である間は継続します。
             GripDrag = IsGripped
-                .Where(b => b == true)
-                .Select(_ => ToPoint3D(InteractiveHand.Value))
-                .Select(p0 => InteractiveHand
-                    .TakeWhile(_ => IsGripped.Value == true)
-                    .Select(_ => ToPoint3D(InteractiveHand.Value) - p0));
+                .Where(b => b && IsInteractive.Value)
+                .Select(_ => ToPoint3D(PrimaryHand.Value))
+                .Select(p0 => PrimaryHand
+                    .TakeWhile(_ => IsGripped.Value && IsTracked.Value)
+                    .Select(_ => ToPoint3D(PrimaryHand.Value) - p0));
             GripDrag
                 .Select(d => new { v0 = DraggedDelta.Value, d })
                 .Subscribe(_ => _.d.Subscribe(v => DraggedDelta.Value = _.v0 + v));

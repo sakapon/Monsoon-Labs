@@ -15,16 +15,22 @@ namespace ImagePinchKinect
         public ReadOnlyReactiveProperty<double> Scale { get; }
         public ReadOnlyReactiveProperty<Point> TransformOrigin { get; }
 
+        public ReadOnlyReactiveProperty<string> InteractiveColor { get; }
+
         public MainViewModel()
         {
             Translation = AppModel.DraggedDelta
                 .Select(v => 1000 * new Vector(v.X, v.Y))
                 .ToReadOnlyReactiveProperty();
             Scale = AppModel.DraggedDelta
-                .Select(v => Math.Pow(2, -2.0 * v.Z))
+                .Select(v => Math.Pow(2, -4.0 * v.Z))
                 .ToReadOnlyReactiveProperty();
             TransformOrigin = Translation
                 .Select(v => new Point((2880 - v.X) / 5760, (1800 - v.Y) / 3600))
+                .ToReadOnlyReactiveProperty();
+
+            InteractiveColor = AppModel.IsInteractive
+                .Select(b => b ? "#009900" : "#FF6600")
                 .ToReadOnlyReactiveProperty();
         }
     }
