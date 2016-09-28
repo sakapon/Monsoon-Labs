@@ -10,7 +10,7 @@ namespace InteractionWpf
 {
     public class MainViewModel
     {
-        public AppModel AppModel { get; } = new AppModel();
+        public InteractionTracker InteractionTracker { get; } = new InteractionTracker();
 
         public ReadOnlyReactiveProperty<InteractionHandPointer> LeftHand { get; }
         public ReadOnlyReactiveProperty<InteractionHandPointer> RightHand { get; }
@@ -29,10 +29,10 @@ namespace InteractionWpf
 
         public MainViewModel()
         {
-            LeftHand = AppModel.UserInfo
+            LeftHand = InteractionTracker.UserInfo
                 .Select(u => u?.HandPointers.FirstOrDefault(h => h.HandType == InteractionHandType.Left))
                 .ToReadOnlyReactiveProperty();
-            RightHand = AppModel.UserInfo
+            RightHand = InteractionTracker.UserInfo
                 .Select(u => u?.HandPointers.FirstOrDefault(h => h.HandType == InteractionHandType.Right))
                 .ToReadOnlyReactiveProperty();
 

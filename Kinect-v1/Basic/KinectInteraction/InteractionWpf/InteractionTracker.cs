@@ -8,7 +8,7 @@ using Reactive.Bindings;
 
 namespace InteractionWpf
 {
-    public class AppModel
+    public class InteractionTracker
     {
         public ReactiveProperty<UserInfo[]> UserInfoes { get; } = new ReactiveProperty<UserInfo[]>(mode: ReactivePropertyMode.DistinctUntilChanged);
         public ReadOnlyReactiveProperty<UserInfo> UserInfo { get; }
@@ -16,7 +16,7 @@ namespace InteractionWpf
         KinectSensor Sensor;
         InteractionStream InteractionStream;
 
-        public AppModel()
+        public InteractionTracker()
         {
             UserInfo = UserInfoes.Select(ToFirstUserInfo).ToReadOnlyReactiveProperty();
 
