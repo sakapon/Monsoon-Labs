@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using Microsoft.Kinect;
 using Microsoft.Kinect.Toolkit.Interaction;
 using Reactive.Bindings;
@@ -11,15 +10,15 @@ namespace InteractionWpf
 {
     public class AppModel
     {
-        Subject<UserInfo[]> UserInfoes = new Subject<UserInfo[]>();
-        public IObservable<UserInfo> UserInfo { get; }
+        public ReactiveProperty<UserInfo[]> UserInfoes { get; } = new ReactiveProperty<UserInfo[]>(mode: ReactivePropertyMode.DistinctUntilChanged);
+        public ReadOnlyReactiveProperty<UserInfo> UserInfo { get; }
 
         KinectSensor Sensor;
         InteractionStream InteractionStream;
 
         public AppModel()
         {
-            UserInfo = UserInfoes.Select(us => us.FirstOrDefault(u => u.SkeletonTrackingId != 0));
+            UserInfo = UserInfoes.Select(ToFirstUserInfo).ToReadOnlyReactiveProperty();
 
             if (DispatcherHelper.IsInDesignMode) return;
             if (!KinectSensor.KinectSensors.Any()) return;
@@ -65,9 +64,14 @@ namespace InteractionWpf
 
                 var userInfoes = new UserInfo[InteractionFrame.UserInfoArrayLength];
                 frame.CopyInteractionDataTo(userInfoes);
-                UserInfoes.OnNext(userInfoes);
+                UserInfoes.Value = userInfoes;
             }
         }
+
+        UserInfo ToFirstUserInfo(UserInfo[] us) =>
+            UserInfo.Value == null ?
+            us.FirstOrDefault(u => u.SkeletonTrackingId != 0) :
+            us.FirstOrDefault(u => u.SkeletonTrackingId == UserInfo.Value.SkeletonTrackingId);
     }
 
     public class DummyClient : IInteractionClient
