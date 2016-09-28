@@ -36,6 +36,8 @@ namespace ImagePinchKinect
                 .Select(h => h != null && h.HandEventType == InteractionHandEventType.Grip)
                 .ToReadOnlyReactiveProperty();
 
+            // ドラッグは IsInteractive のときに開始します。
+            // ドラッグは IsTracked である間は継続します。
             GripDrag = IsGripped
                 .Where(b => b && IsInteractive.Value)
                 .Select(_ => ToPoint3D(PrimaryHand.Value))
